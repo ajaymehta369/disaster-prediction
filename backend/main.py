@@ -101,9 +101,9 @@ async def analyze(request: AnalyzeRequest):
         logger.error(f"ValueError: {ve}")
         raise HTTPException(status_code=400, detail=str(ve))
     except Exception as e:
-        logger.error(f"Analyze endpoint error: {type(e).__name__}: {e}")
-        # Return more detailed error for debugging
-        error_msg = f"Neural Core Sync Failure: {type(e).__name__}"
+        logger.exception("Analyze endpoint error")
+        # Return full exception details for debugging (type + repr + str)
+        error_msg = f"{type(e).__name__}: {repr(e)} | message={str(e)}"
         raise HTTPException(status_code=500, detail=error_msg)
 
 

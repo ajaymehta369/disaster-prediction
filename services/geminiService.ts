@@ -17,7 +17,7 @@ export const analyzeLocationRisk = async (
   try {
     
     const url = `${API_BASE}/analyze`;
-    console.log("🔗 Requesting:", url);
+    console.log("🔗 Requesting:", url,JSON.stringify({ location, reports, lang }));
     
     const response = await fetch(url, {
       method: "POST",
