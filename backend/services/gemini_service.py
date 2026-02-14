@@ -27,10 +27,9 @@ LANG_NAMES = {"en": "English", "es": "Spanish", "fr": "French", "hi": "Hindi"}
 
 # Models to try in order — if one hits quota, try the next
 FALLBACK_MODELS = [
-    "gemini-2.5-flash",
-    "gemini-3-flash-preview",
     "gemini-2.0-flash",
-    "gemini-2.0-flash-lite",
+    "gemini-1.5-flash",
+    "gemini-1.5-pro",
 ]
 
 MAX_RETRIES = 3
@@ -48,7 +47,9 @@ async def _call_with_retry(client, model_list, contents, config, description="AP
         for attempt in range(MAX_RETRIES):
             try:
                 logger.info(f"{description} → model={model}, attempt={attempt + 1}")
-                response = client.models.generate_content(
+                # Run synchronous API call in thread pool for async compatibility
+                response = await asyncio.to_thread(
+                    client.models.generate_content,
                     model=model,
                     contents=contents,
                     config=config,
@@ -138,39 +139,8 @@ async def analyze_location_risk(
         # Grounding sources (empty since we removed google_search for compatibility)
         sources: List[dict] = []
 
-        # 2. Generate visualization image (best effort, skip on failure)
+        # 2. Skip image generation for now (experimental models not stable)
         visualization_image = None
-        try:
-            risks_list = data.get("risks", [])
-            risk_type = risks_list[0].get("type", "natural disaster") if risks_list and isinstance(risks_list[0], dict) else "natural disaster"
-            risk_level = data.get("overallRiskLevel", "Unknown")
-
-            image_prompt = (
-                f"A futuristic, high-tech digital 2.5D schematic map visualization showing a "
-                f"{risk_level} risk of {risk_type} in {location}. "
-                f"Detailed neon HUD elements, warning markers, and topographical heatmaps. "
-                f"Cinematic lighting, deep blue and red aesthetic."
-            )
-
-            img_response = await _call_with_retry(
-                client,
-                ["gemini-2.0-flash-exp-image-generation"],
-                image_prompt,
-                types.GenerateContentConfig(
-                    response_modalities=["IMAGE", "TEXT"],
-                ),
-                description="Image generation",
-            )
-
-            if img_response.candidates:
-                for part in img_response.candidates[0].content.parts:
-                    if part.inline_data:
-                        b64_data = base64.b64encode(part.inline_data.data).decode("utf-8")
-                        visualization_image = f"data:{part.inline_data.mime_type};base64,{b64_data}"
-                        break
-
-        except Exception as img_err:
-            logger.warning(f"Visualization generation failed: {img_err}")
 
         # Build final result
         result = {
