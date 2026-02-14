@@ -29,7 +29,7 @@ LANG_NAMES = {"en": "English", "es": "Spanish", "fr": "French", "hi": "Hindi"}
 FALLBACK_MODELS = [
     "gemini-2.0-flash",
     "gemini-1.5-flash",
-    "gemini-1.5-pro",
+    # "gemini-1.5-pro",
 ]
 
 MAX_RETRIES = 3
