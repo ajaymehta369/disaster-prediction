@@ -4,8 +4,9 @@ services:
     name: disasterguard-backend
     env: python
     region: oregon
-    buildCommand: cd backend && pip install -r requirements.txt
-    startCommand: cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT
+    rootDirectory: backend
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: GEMINI_API_KEY
         sync: false  # You'll set this manually in Render dashboard
@@ -13,15 +14,11 @@ services:
         value: 3.11.0
     
   # Frontend Vite/React Service (Static Site)
-  - type: web
+  - type: static
     name: disasterguard-frontend
-    env: static
     region: oregon
     buildCommand: npm install && npm run build
     staticPublishPath: ./dist
-    envVars:
-      - key: NODE_VERSION
-        value: 18
     routes:
       - type: rewrite
         source: /*
