@@ -62,10 +62,13 @@ app.add_middleware(
 @app.get("/api/health")
 async def health_check():
     """Health check endpoint."""
+    api_key = os.environ.get("GEMINI_API_KEY", "")
     return {
         "status": "online",
         "engine": "Neural-X V4.2",
         "language": "python",
+        "api_key_configured": bool(api_key),
+        "api_key_length": len(api_key) if api_key else 0,
     }
 
 
@@ -84,10 +87,13 @@ async def analyze(request: AnalyzeRequest):
         )
         return result
     except ValueError as ve:
+        logger.error(f"ValueError: {ve}")
         raise HTTPException(status_code=400, detail=str(ve))
     except Exception as e:
-        logger.error(f"Analyze endpoint error: {e}")
-        raise HTTPException(status_code=500, detail="Neural Core Sync Failure")
+        logger.error(f"Analyze endpoint error: {type(e).__name__}: {e}")
+        # Return more detailed error for debugging
+        error_msg = f"Neural Core Sync Failure: {type(e).__name__}"
+        raise HTTPException(status_code=500, detail=error_msg)
 
 
 @app.get("/api/translations")
