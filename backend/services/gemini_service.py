@@ -139,8 +139,38 @@ async def analyze_location_risk(
         # Grounding sources (empty since we removed google_search for compatibility)
         sources: List[dict] = []
 
-        # 2. Skip image generation for now (experimental models not stable)
+        # 2. Generate visualization image (best effort, skip on failure)
         visualization_image = None
+        try:
+            risks_list = data.get("risks", [])
+            risk_type = risks_list[0].get("type", "natural disaster") if risks_list and isinstance(risks_list[0], dict) else "natural disaster"
+            risk_level = data.get("overallRiskLevel", "Unknown")
+
+            image_prompt = (
+                f"A futuristic, high-tech digital 2.5D schematic map visualization showing a "
+                f"{risk_level} risk of {risk_type} in {location}. "
+                f"Detailed neon HUD elements, warning markers, and topographical heatmaps. "
+                f"Cinematic lighting, deep blue and red aesthetic."
+            )
+
+            img_response = await asyncio.to_thread(
+                client.models.generate_content,
+                model="gemini-2.0-flash-exp-image-generation",
+                contents=image_prompt,
+                config=types.GenerateContentConfig(
+                    response_modalities=["IMAGE", "TEXT"],
+                ),
+            )
+
+            if img_response.candidates:
+                for part in img_response.candidates[0].content.parts:
+                    if part.inline_data:
+                        b64_data = base64.b64encode(part.inline_data.data).decode("utf-8")
+                        visualization_image = f"data:{part.inline_data.mime_type};base64,{b64_data}"
+                        break
+
+        except Exception as img_err:
+            logger.warning(f"Visualization generation failed (non-critical): {img_err}")
 
         # Build final result
         result = {
