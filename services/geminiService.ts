@@ -6,7 +6,8 @@ import { PredictionResult, UserReport, Language } from "../types";
 
 // Local testing: http://localhost:8001, Production: Render URL
 // const BACKEND_URL = "http://localhost:8001";
-const BACKEND_URL = "https://disasterguard-backend-v79u.onrender.com";
+// const BACKEND_URL = "https://disasterguard-backend-v79u.onrender.com";
+const BACKEND_URL = "https://disaster-prediction-2.onrender.com";
 const API_BASE = `${BACKEND_URL}/api`;
 
 export const analyzeLocationRisk = async (
