@@ -4,7 +4,8 @@
  */
 import { PredictionResult, UserReport, Language } from "../types";
 
-const API_BASE = "/api";
+// Use environment variable for backend URL, fallback to relative path for local dev
+const API_BASE = import.meta.env.VITE_BACKEND_URL || "/api";
 
 export const analyzeLocationRisk = async (
   location: string,
