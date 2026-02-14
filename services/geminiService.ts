@@ -4,8 +4,8 @@
  */
 import { PredictionResult, UserReport, Language } from "../types";
 
-// Use environment variable for backend URL, fallback to relative path for local dev
-const API_BASE = import.meta.env.VITE_BACKEND_URL || "/api";
+// Use environment variable for backend URL, fallback to production backend
+const API_BASE = import.meta.env.VITE_BACKEND_URL || "https://disasterguard-backend-v79u.onrender.com/api";
 
 export const analyzeLocationRisk = async (
   location: string,
