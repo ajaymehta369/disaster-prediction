@@ -4,8 +4,9 @@
  */
 import { PredictionResult, UserReport, Language } from "../types";
 
-// Use environment variable for backend URL, fallback to production backend
-const API_BASE = import.meta.env.VITE_BACKEND_URL || "https://disasterguard-backend-v79u.onrender.com/api";
+// Production backend URL
+const BACKEND_URL = "https://disasterguard-backend-v79u.onrender.com";
+const API_BASE = `${BACKEND_URL}/api`;
 
 export const analyzeLocationRisk = async (
   location: string,
@@ -13,18 +14,25 @@ export const analyzeLocationRisk = async (
   lang: Language = 'en'
 ): Promise<PredictionResult> => {
   try {
-    const response = await fetch(`${API_BASE}/analyze`, {
+    const url = `${API_BASE}/analyze`;
+    console.log("🔗 Requesting:", url);
+    
+    const response = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ location, reports, lang }),
     });
 
+    console.log("📡 Response status:", response.status);
+
     if (!response.ok) {
       const err = await response.json().catch(() => ({ detail: "Unknown error" }));
+      console.error("❌ API Error:", err);
       throw new Error(err.detail || `Server error: ${response.status}`);
     }
 
     const data: PredictionResult = await response.json();
+    console.log("✅ Analysis complete");
     return data;
   } catch (error) {
     console.error("Neural Prediction Error:", error);
