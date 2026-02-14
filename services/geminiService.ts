@@ -4,7 +4,8 @@
  */
 import { PredictionResult, UserReport, Language } from "../types";
 
-// Production backend URL
+// Local testing: http://localhost:8001, Production: Render URL
+// const BACKEND_URL = "http://localhost:8001";
 const BACKEND_URL = "https://disasterguard-backend-v79u.onrender.com";
 const API_BASE = `${BACKEND_URL}/api`;
 
@@ -14,6 +15,7 @@ export const analyzeLocationRisk = async (
   lang: Language = 'en'
 ): Promise<PredictionResult> => {
   try {
+    
     const url = `${API_BASE}/analyze`;
     console.log("🔗 Requesting:", url);
     
@@ -22,6 +24,8 @@ export const analyzeLocationRisk = async (
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ location, reports, lang }),
     });
+    console.log("resp", response);
+    
 
     console.log("📡 Response status:", response.status);
 

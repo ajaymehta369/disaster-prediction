@@ -104,6 +104,7 @@ const App: React.FC = () => {
     }, 1000);
 
     try {
+      console.log("for input", query, "with reports", communityReports,lang);
       const data = await analyzeLocationRisk(query, communityReports, lang);
       setResult(data);
       addLog("NEURAL LINK STABILIZED. RESULTS RENDERED.");
