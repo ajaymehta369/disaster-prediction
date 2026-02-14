@@ -1,0 +1,9 @@
+
+{
+  "name": "DisasterGuard - AI Prediction & Risk Assessment",
+  "description": "A comprehensive disaster prediction and risk assessment tool powered by Gemini AI, providing real-time alerts, historical data analysis, and safety recommendations for any location.",
+  "requestFramePermissions": [
+    "geolocation",
+    "microphone"
+  ]
+}
