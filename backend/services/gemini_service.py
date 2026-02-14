@@ -27,9 +27,12 @@ LANG_NAMES = {"en": "English", "es": "Spanish", "fr": "French", "hi": "Hindi"}
 
 # Models to try in order — if one hits quota, try the next
 FALLBACK_MODELS = [
-    # "gemini-2.0-flash",
-    # "gemini-2.0-flash-lite",
-    "gemini-2.5-flash",
+"gemini-2.5-flash",
+"gemini-2.5-pro",
+"gemini-2.0-flash",
+"gemini-2.0-flash-001",
+"gemini-2.0-flash-lite-001",
+"gemini-2.0-flash-lite",
 ]
 
 MAX_RETRIES = 3
